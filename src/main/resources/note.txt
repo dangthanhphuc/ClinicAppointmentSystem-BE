@@ -1,0 +1,31 @@
++ Lưu ý khi tạo Apppointment thì doctor không được tạo Appointment thời gian rảnh
+trùng với thời gian Appointment đã thêm
+
++ làm post ảnh lên cho patient và doctor (
+    + Kiểm tra ném lỗi khi upload nhiều file hoặc ràng buộc
+)
+
+* Có thể xác định các trường createdBy, modifiedAt, modifiedBy bằng User khi người dùng đăng nhập
+vào hệ thống thông qua Spring Security và lấy thông tin User thông qua token
+bằng phương thức getUserByToken(String token)
+
+
+* Nếu người dùng nhập id trên url là id khác id hiện đang đang nhập thì phương thức sẽ không cho thực hiện
+
+
+21/4 :
+    Sáng :
+
+        + Thêm Token Entity
+        + Giới hạn Token truy cập
+        + Refresh Token
+
+        + Set by byPassToken
+        + Set up @PreAuthorize
+
+    Trưa :
+
+        + Thiết kế services cho Angular
+        + Thiết kế giao diện lọc bác sĩ theo (category của phòng khám, giới tính, tên phòng khám), sắp xếp (tên tăng giảm)
+        + Thiết kế giao diện quản lý tài khoản cho Patient
+
