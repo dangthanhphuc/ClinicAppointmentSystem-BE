@@ -13,6 +13,7 @@ import com.example.main.services.appointmenttype.IAppointmentTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,7 @@ public class AppointmentTypeController {
 
     private final IAppointmentTypeService appointmentTypeService;
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createAppointmentType(
             @Valid @RequestBody AppointmentTypeDTO appointmentTypeDTO,
@@ -57,6 +59,7 @@ public class AppointmentTypeController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @PutMapping("/update/{appointmentTypeId}")
     public ResponseEntity<ResponseObject> updateAppointmentType(
             @PathVariable Long appointmentTypeId,
@@ -82,6 +85,7 @@ public class AppointmentTypeController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/delete/{appointmentTypeId}")
     public ResponseEntity<ResponseObject> deleteAppointmentType(
             @PathVariable Long appointmentTypeId

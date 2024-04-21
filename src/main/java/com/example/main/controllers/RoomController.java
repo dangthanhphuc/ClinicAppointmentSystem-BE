@@ -13,6 +13,7 @@ import com.example.main.services.room.IRoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 public class RoomController {
     private final IRoomService roomService;
+
     @GetMapping("/{roomId}")
     public ResponseEntity<ResponseObject> getRoom(
             @PathVariable Long roomId
@@ -72,6 +74,7 @@ public class RoomController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createRoom(
             @Valid @RequestBody RoomDTO roomDTO,
@@ -96,6 +99,7 @@ public class RoomController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @PutMapping("/update/{roomId}")
     public ResponseEntity<ResponseObject> updateRoom(
             @PathVariable Long roomId,
@@ -121,6 +125,7 @@ public class RoomController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/delete/{roomId}")
     public ResponseEntity<ResponseObject> deleteRoom(
             @PathVariable Long roomId

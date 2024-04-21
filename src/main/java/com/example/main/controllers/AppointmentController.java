@@ -11,6 +11,7 @@ import com.example.main.services.appointment.IAppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,8 @@ public class AppointmentController {
 
     private final IAppointmentService appointmentService;
 
-    @PostMapping("/create") // Doctor
+    @PreAuthorize("hasRole(ROLE_DOCTOR)")
+    @PostMapping("/create")
     public ResponseEntity<ResponseObject> createAppointment(
             @Valid @RequestBody AppointmentDTO appointmentDTO,
             BindingResult result
@@ -51,7 +53,8 @@ public class AppointmentController {
         );
     }
 
-    @PutMapping("/update/{appointmentId}")  // Doctor
+    @PreAuthorize("hasRole(ROLE_DOCTOR)")
+    @PutMapping("/update/{appointmentId}")
     public ResponseEntity<ResponseObject> updateAppointment(
             @PathVariable Long appointmentId,
             @Valid @RequestBody AppointmentDTO appointmentDTO,
@@ -73,7 +76,8 @@ public class AppointmentController {
         );
     }
 
-    @DeleteMapping("/delete/{appointmentId}") // Doctor
+    @PreAuthorize("hasRole(ROLE_DOCTOR)")
+    @DeleteMapping("/delete/{appointmentId}")
     public ResponseEntity<ResponseObject> deleteAppointment(
             @PathVariable Long appointmentId
     ) throws IdNotFoundException {
@@ -89,7 +93,8 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("/{appointmentId}") // Manager
+    @PreAuthorize("hasRole(ROLE_CLINIC_MANAGER)")
+    @GetMapping("/{appointmentId}")
     public ResponseEntity<ResponseObject> getAppointment(
             @PathVariable Long appointmentId
     ) throws IdNotFoundException {
@@ -105,6 +110,7 @@ public class AppointmentController {
         );
     }
 
+    @PreAuthorize("hasRole(ROLE_PATIENT)")
     @GetMapping("/patient/{patientId}")
     public ResponseEntity<ResponseObject> getAppointmentsByPatientId(
             @PathVariable Long patientId
@@ -121,6 +127,7 @@ public class AppointmentController {
         );
     }
 
+    @PreAuthorize("hasRole(ROLE_DOCTOR)")
     @GetMapping("/doctor/{doctorId}")
     public ResponseEntity<ResponseObject> getAppointmentsByDoctorId(
             @PathVariable Long doctorId
@@ -137,7 +144,8 @@ public class AppointmentController {
         );
     }
 
-    @GetMapping("") // Manager
+    @PreAuthorize("hasRole(ROLE_CLINIC_MANAGER)")
+    @GetMapping("")
     public ResponseEntity<ResponseObject> getAppointments() {
         List<Appointment> appointments = appointmentService.getAppointments();
         return ResponseEntity.ok().body(
@@ -152,7 +160,8 @@ public class AppointmentController {
     }
 
 
-    @PutMapping("/patient/booking") // Patient
+    @PreAuthorize("hasRole(ROLE_PATIENT)")
+    @PutMapping("/patient/booking")
     public ResponseEntity<ResponseObject> bookingAppointmentFromPatient(
             @RequestParam Long appointmentId,
             @RequestParam Long patientId
@@ -169,6 +178,7 @@ public class AppointmentController {
         );
     }
 
+    @PreAuthorize("hasRole(ROLE_PATIENT)")
     @DeleteMapping("/patient/cancellation/{appointmentId}") // Patient
     public ResponseEntity<ResponseObject> cancellationOfBooking(
             @PathVariable Long appointmentId
@@ -184,4 +194,6 @@ public class AppointmentController {
                         .build()
         );
     }
+
+
 }

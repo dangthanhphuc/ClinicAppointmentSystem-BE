@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 public class ClinicController {
     private final IClinicService clinicService;
+
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createClinic(
             @Valid @RequestBody ClinicDTO clinicDTO,
@@ -52,6 +55,7 @@ public class ClinicController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @PutMapping("/update/{clinicId}")
     public ResponseEntity<ResponseObject> updateClinic(
             @PathVariable Long clinicId,
@@ -77,6 +81,7 @@ public class ClinicController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/delete/{clinicId}")
     public ResponseEntity<ResponseObject> deleteClinic(
             @PathVariable Long clinicId

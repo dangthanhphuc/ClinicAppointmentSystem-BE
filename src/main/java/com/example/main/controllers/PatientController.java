@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 public class PatientController {
     private final IPatientService patientService;
+
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> registerPatient(
             @Valid @RequestBody PatientRegisterAccountDTO patientRegisterAccountDTO,
@@ -67,6 +69,7 @@ public class PatientController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
     @PutMapping("/update/{patientId}")
     public ResponseEntity<ResponseObject> updatePatient(
             @PathVariable Long patientId,
@@ -92,6 +95,7 @@ public class PatientController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER')")
     @DeleteMapping("/delete/{patientId}")
     public ResponseEntity<ResponseObject> deletePatient(
             @PathVariable Long patientId
@@ -109,6 +113,7 @@ public class PatientController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER')")
     @GetMapping("/{patientId}")
     public ResponseEntity<ResponseObject> getPatient(
             @PathVariable Long patientId
@@ -125,6 +130,7 @@ public class PatientController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER')")
     @GetMapping("")
     public ResponseEntity<ResponseObject> getPatients() {
         List<Patient> patients = patientService.getPatients();
@@ -139,6 +145,7 @@ public class PatientController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
     @PostMapping(value = "/uploads/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObject> uploadImages(
@@ -159,4 +166,5 @@ public class PatientController {
                         .build()
         );
     }
+
 }

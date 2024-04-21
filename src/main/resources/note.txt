@@ -14,12 +14,6 @@ bằng phương thức getUserByToken(String token)
 
 
 21/4 :
-    Sáng :
-        + Refresh Token
-
-        + Set by byPassToken
-        + Set up @PreAuthorize
-
     Trưa :
 
         + Thiết kế services cho Angular

@@ -94,19 +94,28 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean isByPassToken(@NotNull HttpServletRequest request) {
         List<Pair<String, String>> byPassToken = Arrays.asList(
-            // Find all
+
+            // AppointmentTypes
+            Pair.of(String.format("%s/appointment_types**", apiPrefix), "GET"),
+
+            // Categories
             Pair.of(String.format("%s/categories**",apiPrefix), "GET"),
-            Pair.of(String.format("%s/appointment_types**", apiPrefix), "GET" ),
-            Pair.of(String.format("%s/doctors**", apiPrefix), "GET"),
+
+            // Clinic
+            Pair.of(String.format("%s/clinics**",apiPrefix), "GET"),
+
+            // Doctors
+            Pair.of(String.format("%s/doctors**", apiPrefix), "GET"), // Lọc lại các thông tin để tránh lộ thông tin bác sĩ
+            Pair.of(String.format("%s/doctors/register", apiPrefix), "POST"),
+
+            // Patient
+            Pair.of(String.format("%s/patients/register", apiPrefix), "POST"),
+
+            // Room
             Pair.of(String.format("%s/rooms**", apiPrefix), "GET"),
 
-            // Test
-            Pair.of(String.format("%s/doctors/register", apiPrefix), "POST"),
-            Pair.of(String.format("%s/doctors/create", apiPrefix), "POST"),
-            Pair.of(String.format("%s/patients/register", apiPrefix), "POST"),
-            Pair.of(String.format("%s/patients", apiPrefix), "GET"),
-            Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
-            Pair.of(String.format("%s/users/refreshToken**", apiPrefix), "POST")
+            // User
+            Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );
 
         for(Pair<String, String> pair : byPassToken){

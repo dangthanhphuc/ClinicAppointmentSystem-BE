@@ -28,7 +28,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class CategoryController {
     private final ICategoryService categoryService;
 
-    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createCategory(
             @Valid @RequestBody CategoryDTO categoryDTO,
@@ -53,7 +53,7 @@ public class CategoryController {
         );
     }
 
-    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @PutMapping("/update/{categoryId}")
     public ResponseEntity<ResponseObject> updateCategory(
             @PathVariable Long categoryId,
@@ -79,7 +79,7 @@ public class CategoryController {
         );
     }
 
-    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/delete/{categoryId}")
     public ResponseEntity<ResponseObject> deleteCategory(
             @PathVariable Long categoryId

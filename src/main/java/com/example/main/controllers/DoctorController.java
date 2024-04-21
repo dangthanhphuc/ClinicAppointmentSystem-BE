@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,7 @@ import static org.springframework.http.HttpStatus.OK;
 public class DoctorController {
     private final IDoctorService doctorService;
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER')")
     @PostMapping("/create")
     public ResponseEntity<ResponseObject> createDoctor(
             @Valid @RequestBody DoctorDTO doctorDTO,
@@ -57,6 +59,7 @@ public class DoctorController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PutMapping("/update/{doctorId}")
     public ResponseEntity<ResponseObject> updateDoctor(
             @PathVariable Long doctorId,
@@ -82,6 +85,7 @@ public class DoctorController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER')")
     @DeleteMapping("/delete/{doctorId}")
     public ResponseEntity<ResponseObject> deleteDoctor(
             @PathVariable Long doctorId
@@ -129,15 +133,16 @@ public class DoctorController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/uploads/{id}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObject> uploadImages(
-            @PathVariable("id") Long patientId,
+            @PathVariable("id") Long doctorId,
             @ModelAttribute("files") List<MultipartFile> files
     ) throws IOException, IdNotFoundException, UnsupportedMediaTypeException, PayloadTooLargeException {
 
         for(MultipartFile file : files) {
-            doctorService.uploadImage(patientId, file);
+            doctorService.uploadImage(doctorId, file);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(

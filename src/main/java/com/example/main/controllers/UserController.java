@@ -16,6 +16,7 @@ import com.example.main.utils.JwtTokenUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,7 @@ public class UserController {
 
     private final JwtTokenUtils jwtTokenUtils;
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @GetMapping("{userId}") // getBykeywork
     public ResponseEntity<ResponseObject> getUser(
             @PathVariable Long userId
@@ -49,6 +51,8 @@ public class UserController {
         );
     }
 
+
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @GetMapping("")
     public ResponseEntity<ResponseObject> getUsers(){
         List<User> users = userService.getUsers();
@@ -63,6 +67,7 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ResponseObject> blockOrEnable(
             @PathVariable Long userId

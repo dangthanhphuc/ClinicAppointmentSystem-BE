@@ -44,6 +44,9 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 GET, String.format("%s/rooms/**", apiPrefix)
                         ).permitAll()
+                        .requestMatchers(
+                                POST, String.format("%s/users/refreshToken/**", apiPrefix)
+                        ).authenticated()
                         .anyRequest()
                         .authenticated();
             });
