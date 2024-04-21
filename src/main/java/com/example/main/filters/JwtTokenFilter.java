@@ -116,6 +116,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             // User
             Pair.of(String.format("%s/users/login", apiPrefix), "POST")
+
         );
 
         for(Pair<String, String> pair : byPassToken){

@@ -1,6 +1,8 @@
 package com.example.main.services.user;
 
 import com.example.main.dtos.LoginDTO;
+import com.example.main.dtos.RegisterAndAuthorizeDTO;
+import com.example.main.entities.Role;
 import com.example.main.entities.Token;
 import com.example.main.entities.User;
 import com.example.main.exceptions.DataNotFoundException;
@@ -8,12 +10,14 @@ import com.example.main.exceptions.ExpiredException;
 import com.example.main.exceptions.IdNotFoundException;
 import com.example.main.exceptions.NotMatchException;
 import com.example.main.filters.JwtTokenFilter;
+import com.example.main.repositories.RoleRepository;
 import com.example.main.repositories.TokenRepository;
 import com.example.main.repositories.UserRepository;
 import com.example.main.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +27,11 @@ import java.util.List;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final RoleRepository roleRepository;
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtils jwtTokenUtils;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public User getUser(Long userId) throws IdNotFoundException {
         return userRepository
@@ -84,5 +91,23 @@ public class UserService implements IUserService {
         authenticationManager.authenticate(authenticationToken); // Xác thực thông tin của authenticationToken
 
         return jwtTokenUtils.generateToken(existingUser);
+    }
+
+    @Override
+    public User registerAndAuthorize(RegisterAndAuthorizeDTO registerAndAuthorizeDTO) throws DataNotFoundException {
+
+        Role role = roleRepository.findById(registerAndAuthorizeDTO.getRoleId())
+                .orElseThrow(
+                        () -> new DataNotFoundException("Role id " + registerAndAuthorizeDTO.getRoleId() + " not found !")
+                );
+
+        String password = passwordEncoder.encode(registerAndAuthorizeDTO.getPassword());
+        User user = User.builder()
+                .userName(registerAndAuthorizeDTO.getUsername())
+                .password(password)
+                .role(role)
+                .build();
+
+        return userRepository.save(user);
     }
 }

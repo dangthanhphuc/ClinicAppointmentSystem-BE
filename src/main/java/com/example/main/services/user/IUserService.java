@@ -1,6 +1,7 @@
 package com.example.main.services.user;
 
 import com.example.main.dtos.LoginDTO;
+import com.example.main.dtos.RegisterAndAuthorizeDTO;
 import com.example.main.entities.User;
 import com.example.main.exceptions.DataNotFoundException;
 import com.example.main.exceptions.ExpiredException;
@@ -17,4 +18,6 @@ public interface IUserService {
     List<User> getUsers() ;
     void deleteUser(Long userId) throws IdNotFoundException;
     String login(LoginDTO loginDTO) throws NotMatchException;
+
+    User registerAndAuthorize(RegisterAndAuthorizeDTO registerAndAuthorizeDTO) throws DataNotFoundException;
 }

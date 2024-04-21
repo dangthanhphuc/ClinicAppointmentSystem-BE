@@ -1,12 +1,15 @@
 package com.example.main.controllers;
 
 import com.example.main.dtos.LoginDTO;
+import com.example.main.dtos.RegisterAndAuthorizeDTO;
 import com.example.main.entities.Token;
 import com.example.main.entities.User;
 import com.example.main.exceptions.DataNotFoundException;
 import com.example.main.exceptions.ExpiredException;
 import com.example.main.exceptions.IdNotFoundException;
 import com.example.main.exceptions.NotMatchException;
+import com.example.main.filters.InputInvalidFilter;
+import com.example.main.responses.DoctorResponse;
 import com.example.main.responses.LoginResponse;
 import com.example.main.responses.ResponseObject;
 import com.example.main.responses.UserResponse;
@@ -18,11 +21,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 @RequiredArgsConstructor
@@ -35,7 +40,7 @@ public class UserController {
     private final JwtTokenUtils jwtTokenUtils;
 
     @PreAuthorize("hasRole('ROLE_CLINIC_MANAGER') or hasRole('ROLE_ADMINISTRATOR')")
-    @GetMapping("{userId}") // getBykeywork
+    @GetMapping("{userId}")
     public ResponseEntity<ResponseObject> getUser(
             @PathVariable Long userId
     ) throws IdNotFoundException {
@@ -117,8 +122,9 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
     @PostMapping("/refreshToken/{refresh_token}")
-    public ResponseEntity<?> refreshToken(
+    public ResponseEntity<ResponseObject> refreshToken(
             @PathVariable(name = "refresh_token") String refreshToken
     ) throws DataNotFoundException, ExpiredException {
 
@@ -145,6 +151,40 @@ public class UserController {
 
     }
 
+    @PostMapping("/authorize")
+    public ResponseEntity<ResponseObject> registerAndAuthorizeUser(
+            @RequestBody RegisterAndAuthorizeDTO registerAndAuthorizeDTO,
+            BindingResult result
+    ) throws DataNotFoundException {
+        ResponseEntity<ResponseObject> checkInvalidInput = InputInvalidFilter.checkInvalidInput(result);
+        if(checkInvalidInput != null){
+            return checkInvalidInput;
+        }
+
+        if(!registerAndAuthorizeDTO.getPassword().equals(registerAndAuthorizeDTO.getRetypePassword())){
+            return ResponseEntity.badRequest().body(
+                    ResponseObject.builder()
+                            .timeStamp(LocalDateTime.now())
+                            .message("Password not match with retype password !")
+                            .status(BAD_REQUEST)
+                            .statusCode(BAD_REQUEST.value())
+                            .data(null)
+                            .build()
+            );
+        }
+
+        User user = userService.registerAndAuthorize(registerAndAuthorizeDTO);
+
+        return ResponseEntity.ok().body(
+                ResponseObject.builder()
+                        .timeStamp(LocalDateTime.now())
+                        .message("User register and authorize successfully !")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .data(UserResponse.fromUser(user))
+                        .build()
+        );
+    }
 
     // resetPassword
 }
