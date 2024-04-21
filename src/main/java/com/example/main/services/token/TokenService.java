@@ -79,7 +79,7 @@ public class TokenService implements ITokenService{
             throw new DataNotFoundException("Cannot found token by refresh token " + refreshToken );
         }
 
-        if(existingToken.getExpirationRefreshDate().isAfter(LocalDateTime.now())) {
+        if(existingToken.getExpirationRefreshDate().isBefore(LocalDateTime.now())) {
             throw new ExpiredException("Refresh token is expired !");
         }
 

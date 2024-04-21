@@ -1,12 +1,14 @@
 package com.example.main.services.user;
 
 import com.example.main.dtos.LoginDTO;
+import com.example.main.entities.Token;
 import com.example.main.entities.User;
 import com.example.main.exceptions.DataNotFoundException;
 import com.example.main.exceptions.ExpiredException;
 import com.example.main.exceptions.IdNotFoundException;
 import com.example.main.exceptions.NotMatchException;
 import com.example.main.filters.JwtTokenFilter;
+import com.example.main.repositories.TokenRepository;
 import com.example.main.repositories.UserRepository;
 import com.example.main.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 @Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtils jwtTokenUtils;
     @Override
@@ -42,6 +45,12 @@ public class UserService implements IUserService {
                         () -> new DataNotFoundException("Username not found !")
                 );
         return user;
+    }
+
+    @Override
+    public User getUserByRefreshToken(String refreshToken) throws DataNotFoundException, ExpiredException {
+        Token token = tokenRepository.findByRefreshToken(refreshToken);
+        return getUserByToken(token.getToken());
     }
 
     @Override

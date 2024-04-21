@@ -112,6 +112,34 @@ public class UserController {
         );
     }
 
+    @PostMapping("/refreshToken/{refresh_token}")
+    public ResponseEntity<?> refreshToken(
+            @PathVariable(name = "refresh_token") String refreshToken
+    ) throws DataNotFoundException, ExpiredException {
+
+        User userDetail = userService.getUserByRefreshToken(refreshToken);
+        Token token = tokenService.refreshToken(userDetail, refreshToken);
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .token(token.getToken())
+                .refreshToken(token.getRefreshToken())
+                .tokenType(token.getTokenType())
+                .username(userDetail.getUsername())
+                .roles(userDetail.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+                .build();
+
+        return ResponseEntity.ok().body(
+                ResponseObject.builder()
+                        .timeStamp(LocalDateTime.now())
+                        .message("User refresh token successfully !")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .data(loginResponse)
+                        .build()
+        );
+
+    }
+
 
     // resetPassword
 }
